@@ -39,7 +39,7 @@ namespace KnowledgeSpace.WebPortal.Helpers
 
         public static CaptchaResult GenerateCaptchaImage(int width, int height, string captchaCode)
         {
-            using (Bitmap baseMap = new Bitmap(width, height))
+            using ( Bitmap baseMap = new Bitmap(width, height))
             using (Graphics graph = Graphics.FromImage(baseMap))
             {
                 Random rand = new Random();

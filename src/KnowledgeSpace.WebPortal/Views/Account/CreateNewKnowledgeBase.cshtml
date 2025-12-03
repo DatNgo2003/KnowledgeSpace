@@ -4,7 +4,7 @@
     ViewData["Title"] = "Tạo mới bài đăng";
     Layout = "~/Views/Shared/_SubLayout.cshtml";
 }
-@section scripts{
+@section scripts {
     <script src="~/lib/ckeditor/ckeditor.js"></script>
     <script src="~/js/controllers/accountController.js" asp-append-version="true"></script>
     <script>
@@ -27,6 +27,15 @@
         </div>
         <div class="span6">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div style="background: yellow; padding: 10px; margin-bottom: 10px;">
+                <strong>DEBUG:</strong> @ViewBag.DebugInfo
+            </div>
+            <div style="background: orange; padding: 10px; margin-bottom: 10px;">
+                <strong>RAW API:</strong> @ViewBag.RawCategories
+            </div>
+            <div style="background: lightblue; padding: 10px; margin-bottom: 10px;">
+                <strong>DETAIL:</strong> @ViewBag.DetailInfo
+            </div>
         </div>
         <div class="span2">
             Danh mục

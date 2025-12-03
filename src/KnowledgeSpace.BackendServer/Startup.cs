@@ -213,6 +213,7 @@ namespace KnowledgeSpace.BackendServer
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
             });
