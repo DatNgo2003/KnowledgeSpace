@@ -56,12 +56,41 @@ namespace KnowledgeSpace.WebPortal.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateNewKnowledgeBase()
         {
-            await SetCategoriesViewBag();
+            try
+            {
+                // DEBUG: Xem API trả về gì
+                var categories = await _categoryApiClient.GetCategories();
+
+                ViewBag.RawCategories = categories != null ?
+                    $"Count: {categories.Count} - Data: {string.Join(", ", categories.Select(c => $"[{c.Id}:{c.Name}]"))}" :
+                    "NULL";
+
+                await SetCategoriesViewBag();
+
+                var cats = ViewBag.Categories as List<SelectListItem>;
+                if (cats != null)
+                {
+                    ViewBag.DebugInfo = $"Có {cats.Count} items trong ViewBag";
+                    ViewBag.DetailInfo = string.Join(" | ", cats.Select(c => $"{c.Value}:{c.Text}"));
+                }
+                else
+                {
+                    ViewBag.DebugInfo = "ViewBag.Categories = NULL";
+                    ViewBag.DetailInfo = "N/A";
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.DebugInfo = $"LỖI: {ex.Message}";
+                ViewBag.RawCategories = $"Exception: {ex.ToString()}";
+                ViewBag.DetailInfo = "Error occurred";
+            }
+
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateNewKnowledgeBase([FromForm]KnowledgeBaseCreateRequest request)
+        public async Task<IActionResult> CreateNewKnowledgeBase([FromForm] KnowledgeBaseCreateRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -103,7 +132,7 @@ namespace KnowledgeSpace.WebPortal.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditKnowledgeBase([FromForm]KnowledgeBaseCreateRequest request)
+        public async Task<IActionResult> EditKnowledgeBase([FromForm] KnowledgeBaseCreateRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -127,18 +156,32 @@ namespace KnowledgeSpace.WebPortal.Controllers
         {
             var categories = await _categoryApiClient.GetCategories();
 
-            var items = categories.Select(i => new SelectListItem()
-            {
-                Text = i.Name,
-                Value = i.Id.ToString(),
-            }).ToList();
+            // Tạo list items
+            var items = new List<SelectListItem>();
 
-            items.Insert(0, new SelectListItem()
+            // Thêm option mặc định
+            items.Add(new SelectListItem
             {
-                Value = null,
-                Text = "--Chọn danh mục--"
+                Value = "",
+                Text = "--Chọn danh mục--",
+                Selected = !selectedValue.HasValue
             });
-            ViewBag.Categories = new SelectList(items, "Value", "Text", selectedValue);
+
+            // Kiểm tra categories có dữ liệu không
+            if (categories != null && categories.Any())
+            {
+                foreach (var category in categories)
+                {
+                    items.Add(new SelectListItem
+                    {
+                        Text = category.Name,
+                        Value = category.Id.ToString(),
+                        Selected = selectedValue.HasValue && category.Id == selectedValue.Value
+                    });
+                }
+            }
+
+            ViewBag.Categories = items;
         }
     }
 }

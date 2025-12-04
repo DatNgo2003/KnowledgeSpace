@@ -115,7 +115,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
 
         //URL: GET: http://localhost:5001/api/users/{id}
         [HttpGet("{id}")]
-        [ClaimRequirement(FunctionCode.SYSTEM_USER, CommandCode.VIEW)]
+        //[ClaimRequirement(FunctionCode.SYSTEM_USER, CommandCode.VIEW)]
         public async Task<IActionResult> GetById(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
